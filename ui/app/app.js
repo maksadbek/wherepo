@@ -1,4 +1,4 @@
 var React = require('react');
-var StatusApp = require('./components/StatusApp.react');
+var Main = require('./components/Main.react');
 
-React.render( <StatusApp/>, document.getElementById('app'));
+React.render( <Main/>, document.getElementById('app'));
