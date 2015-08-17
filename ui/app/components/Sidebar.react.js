@@ -6,6 +6,10 @@ var Mui  = require('material-ui');
 var ThemeManager = new Mui.Styles.ThemeManager();
 var ListItem = Mui.ListItem;
 var Checkbox = Mui.Checkbox;
+var injectTapEventPlugin = require("react-tap-event-plugin");
+var FontIcon = Mui.FontIcon;
+
+injectTapEventPlugin();
 
 var Sidebar = React.createClass({
     childContextTypes: {
@@ -75,15 +79,16 @@ var Sidebar = React.createClass({
         var group = this.props.groupName;
         var checked = this.state.isChildChecked;
         stat.forEach(function(k){
-            //statuses.push(<Status key={k.id} stat={k} isChecked={checked} />);
-            var item = <ListItem  key={k.id} primaryText={k.number} leftCheckbox={<Checkbox name="checkbox"></Checkbox>}>
+            var item =  <ListItem  key={k.id} primaryText={k.number} leftCheckbox={<Checkbox name="checkbox"></Checkbox>} >
+                          <FontIcon style={{float: "right"}} className="material-icons">home</FontIcon>
+                          <FontIcon style={{float: "right"}} className="material-icons">android</FontIcon>
                         </ListItem>
             statuses.push(item);
         })
-        return (
-            <ListItem open={true} primaryText={group} leftCheckbox={<Checkbox name="checkbox"></Checkbox>} disabled={false}>
-                    {statuses} 
-            </ListItem>
+        return ( <ListItem open={true} primaryText={group} >
+                        <Checkbox style={{float: "left", width: "auto"}} name="checkbox"></Checkbox>
+                        {statuses} 
+                </ListItem>
         );
     },
 
