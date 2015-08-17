@@ -13,4 +13,5 @@ conf.toml
 static/flux/example.html
 ui/public/bower_components
 ui/public/fonts
+ui/public/*
 wherepo
