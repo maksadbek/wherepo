@@ -11,6 +11,7 @@ var FontIcon = Mui.FontIcon;
 
 injectTapEventPlugin();
 
+var markers = [];
 var Sidebar = React.createClass({
     childContextTypes: {
           muiTheme: React.PropTypes.object
@@ -21,7 +22,9 @@ var Sidebar = React.createClass({
         };
     },
     propTypes:{
-        stats: React.PropTypes.object.isRequired
+        stats: React.PropTypes.object.isRequired,
+        map: React.PropTypes.object.isRequired,
+        bounds: React.PropTypes.object.isRequired
     },
     getInitialState: function(){
         return { style: "", isChildChecked: false}
@@ -73,17 +76,58 @@ var Sidebar = React.createClass({
         // on click to the title, center the marker on the map
     },
     render: function(){
+        var map = this.props.map;
+        var bounds = this.props.bounds;
+        var shape = {
+            coords : [1,1,1,20,18,20,18,1],
+            type: 'circle'
+        };
+            
         var statuses = [];
         var stat = this.props.stats;
         var group = this.props.stats.groupName;
         var checked = this.state.isChildChecked;
-        stat.data.forEach(function(k){
-            var item =  <ListItem  key={k.id} primaryText={k.number} leftCheckbox={<Checkbox name="checkbox"></Checkbox>} >
-                          <FontIcon style={{float: "right"}} className="material-icons">home</FontIcon>
-                          <FontIcon style={{float: "right"}} className="material-icons">android</FontIcon>
-                        </ListItem>
-            statuses.push(item);
-        })
+        if(markers.length === 0){
+            stat.data.forEach(function(k){
+                var latLng = new google.maps.LatLng(k.latitude, k.longitude);
+                var marker = new google.maps.Marker({
+                    position: latLng,
+                    setMap: map,
+                    title: k.number,
+                    id: k.id,
+                    shape: shape
+                });
+                markers.push(marker);
+                bounds.extend(marker.position);
+                var item =  <ListItem  key={k.id} primaryText={k.number} leftCheckbox={<Checkbox name="checkbox"></Checkbox>} >
+                              <FontIcon style={{float: "right"}} className="material-icons">home</FontIcon>
+                              <FontIcon style={{float: "right"}} className="material-icons">android</FontIcon>
+                            </ListItem>
+                statuses.push(item);
+            })
+        } else {
+            markers.forEach(function(m){
+                stat.data.forEach(function(k){
+                    if(k.id === m.id){
+                        m.setPosition(new google.maps.LatLng(k.latitude, k.longitude));
+                        m.title = k.number;
+                        m.id = k.id;
+                        var item = <ListItem key={k.id} primaryText={k.number} leftCheckbox={<Checkbox name="checkbox"></Checkbox>}>
+                                      <FontIcon style={{float: "right"}} className="material-icons">home</FontIcon>
+                                      <FontIcon style={{float: "right"}} className="material-icons">android</FontIcon>
+                                   </ListItem>
+                        statuses.push(item);
+                    }
+                });
+            });
+        }
+       // stat.data.forEach(function(k){
+       //             var item = <ListItem key={k.id} primaryText={k.number} leftCheckbox={<Checkbox name="checkbox"></Checkbox>}>
+       //                           <FontIcon style={{float: "right"}} className="material-icons">home</FontIcon>
+       //                           <FontIcon style={{float: "right"}} className="material-icons">android</FontIcon>
+       //                        </ListItem>
+       //             statuses.push(item);
+       // });
         return ( <ListItem open={true} primaryText={group} >
                         <Checkbox style={{float: "left", width: "auto"}} name="checkbox"></Checkbox>
                         {statuses} 

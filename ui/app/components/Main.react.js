@@ -53,7 +53,14 @@ var StatusApp = React.createClass({
         };
     },
     getInitialState: function(){
+        this._bounds = new google.maps.LatLngBounds();
+        var shape = {
+            coords: [1, 1, 1, 20, 18, 20, 18 , 1],
+            type: 'poly'
+        };
         return {
+            bounds: {},
+            map: {},
             stats: {
                 id: '',
                 update: [],
@@ -65,6 +72,9 @@ var StatusApp = React.createClass({
     componentDidMount: function(){
         StatusStore.addChangeListener(this._onChange);
         UserStore.addChangeListener(this._onAuth);
+        var mapOptions = { zoom: 10 };
+        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        this.setState({map: map});
     },
 
     componentWillMount: function(){
@@ -88,8 +98,10 @@ var StatusApp = React.createClass({
         var content = [];
         var update = this.state.stats.update;
         var checked = this.state.isChildChecked;
+        var bounds = this.state.bounds;
+        var map = this.state.map;
         update.forEach(function(group){
-            content.push(<Sidebar key={group.groupName} stats={group}/>)
+            content.push(<Sidebar bounds={bounds} map={map} key={group.groupName} stats={group}/>)
         });
         return (   
             <div>
@@ -101,12 +113,14 @@ var StatusApp = React.createClass({
                 />
 
                 <div style={{width:"30%"}}> 
-                <Paper>
-                    <List>
-                        {content}
-                    </List>
-                </Paper>
+                    <div style={{border: "solid 1px #d9d9d9", height: "100vh", float: "left", overflow:"scroll"}}>
+                        <List>
+                            {content}
+                        </List>
+                    </div>
                 </div>
+                <div style={{border: "solid 1px #d9d9d9", height: "100vh", float: "left", width:"67%"}} id={"map-canvas"}></div>
+
             </div>
             )
     },
@@ -119,7 +133,9 @@ var StatusApp = React.createClass({
         setInterval(function(){
             StatusStore.sendAjax();
         }, 5000);
-    }
+    },
+    _map: {},
+    _bounds: {}
 });
 
 module.exports = StatusApp;
