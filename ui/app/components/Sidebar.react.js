@@ -17,8 +17,7 @@ var Sidebar = React.createClass({
         };
     },
     propTypes:{
-        stats: React.PropTypes.array.isRequired,
-        groupName: React.PropTypes.string.isRequired
+        stats: React.PropTypes.object.isRequired
     },
     getInitialState: function(){
         return { style: "", isChildChecked: false}
@@ -72,9 +71,9 @@ var Sidebar = React.createClass({
     render: function(){
         var statuses = [];
         var stat = this.props.stats;
-        var group = this.props.groupName;
+        var group = this.props.stats.groupName;
         var checked = this.state.isChildChecked;
-        stat.forEach(function(k){
+        stat.data.forEach(function(k){
             //statuses.push(<Status key={k.id} stat={k} isChecked={checked} />);
             var item = <ListItem  key={k.id} primaryText={k.number} leftCheckbox={<Checkbox name="checkbox"></Checkbox>}>
                         </ListItem>

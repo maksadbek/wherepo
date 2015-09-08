@@ -57,9 +57,6 @@ var StatusStore = assign({}, EventEmitter.prototype, {
         
     },
     sendAjax: function(){
-        if(MonReqToggler !== 1){
-            return _carStatus;
-        }
         var xhr = new XMLHttpRequest();
         xhr.open('POST', encodeURI(positionURL));
         xhr.setRequestHeader('Content-Type','application/json');
@@ -83,7 +80,6 @@ var StatusStore = assign({}, EventEmitter.prototype, {
                         });
                     });
                     indexed = true;
-                    mon.obj_array(_markersOnMap, false);
                     // TODO, this is for test
                     _markersOnMap[Object.keys(_markersOnMap)[0]].action = '2';
                 }
@@ -99,7 +95,7 @@ var StatusStore = assign({}, EventEmitter.prototype, {
         };
         xhr.setRequestHeader("X-Access-Token", UserStore.token);
         xhr.send(JSON.stringify({
-            fleetID: go_mon_fleet, // TODO use UserStore.clientInfo.fleet,
+            fleetID: UserStore.clientInfo.fleet, // TODO use UserStore.clientInfo.fleet,
             userName: UserStore.clientInfo.login,
             })
         );

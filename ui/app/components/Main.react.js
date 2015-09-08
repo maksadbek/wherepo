@@ -1,9 +1,9 @@
 var React = require('react');
-var StatusStore = require('../stores/StatusStore').StatusStore;
+var StatusStore = require('../stores/StatusStore');
 var CarActions = require('../actions/StatusActions');
 var UserActions = require('../actions/UserActions');
 var Sidebar = require('./Sidebar.react');
-var UserStore = require('../stores/StatusStore').UserStore;
+var UserStore = require('../stores/UserStore');
 var Status = require('./CarStatus.react');
 var Mui  = require('material-ui');
 var ThemeManager = new Mui.Styles.ThemeManager();
@@ -56,8 +56,7 @@ var StatusApp = React.createClass({
         return {
             stats: {
                 id: '',
-                update: {"":[]},
-                last_request: null
+                update: [],
             },
             isChildChecked: false
         }
@@ -89,9 +88,9 @@ var StatusApp = React.createClass({
         var content = [];
         var update = this.state.stats.update;
         var checked = this.state.isChildChecked;
-        for(var i in update){
-            content.push(<Sidebar key={i} groupName={i} stats={update[i]}/>)
-        }
+        update.forEach(function(group){
+            content.push(<Sidebar key={group.groupName} stats={group}/>)
+        });
         return (   
             <div>
                 <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
@@ -110,6 +109,7 @@ var StatusApp = React.createClass({
         this.setState({stats: getAllStatuses()});
     },
     _onAuth: function(){
+        console.log("fuck");
         StatusStore.sendAjax();
         setInterval(function(){
             StatusStore.sendAjax();

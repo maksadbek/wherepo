@@ -50,9 +50,11 @@ var UserStore = assign({}, EventEmitter.prototype, {
         );
     },
     emitChange: function(){
+        console.log("emitChange");
         this.emit(CHANGE_EVENT);
     },
     addChangeListener: function(callback){
+        console.log("add change listener");
         this.on(CHANGE_EVENT, callback);
     },
     removeChangeListener: function(callback){

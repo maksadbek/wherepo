@@ -8,11 +8,9 @@ pid
 log
 *~
 *.swp
-static/flux/js/bundle.js
-static/flux/js/ext-all-debug.js
-static/flux/js/ext-base.js
 conf.toml
 static/flux/example.html
 ui/public/bower_components
+ui/public/javascripts/app.js
 ui/public/fonts
 wherepo
