@@ -9,11 +9,17 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/didip/tollbooth"
+	tollboothConf "github.com/didip/tollbooth/config"
 	"github.com/garyburd/redigo/redis"
 )
 
 var config conf.App
+
+// setup rate limiter, 1 request per 5 seconds
+var Limiter *tollboothConf.Limiter
 
 type gzipResponseWriter struct {
 	io.Writer
@@ -51,6 +57,10 @@ func Initialize(c conf.App) error {
 	if err != nil {
 		return err
 	}
+	// setup rate limiter
+	Limiter = tollbooth.NewLimiter(1, time.Second*5)
+	Limiter.Methods = append(Limiter.Methods, "POST")
+	//Limiter.IPLookups = []string{""}
 	return err
 }
 

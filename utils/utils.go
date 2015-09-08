@@ -7,10 +7,10 @@ import (
 	"syscall"
 	"time"
 
-	"bitbucket.org/maksadbek/go-mon-service/conf"
-	"bitbucket.org/maksadbek/go-mon-service/datastore"
-	log "bitbucket.org/maksadbek/go-mon-service/logger"
-	"bitbucket.org/maksadbek/go-mon-service/rcache"
+	"github.com/Maksadbek/wherepo/conf"
+	"github.com/Maksadbek/wherepo/models"
+	log "github.com/Maksadbek/wherepo/logger"
+	"github.com/Maksadbek/wherepo/cache"
 )
 
 func SendTERM(pid int) error {
@@ -74,46 +74,41 @@ func WritePid() error {
 	f.Close()
 	return nil
 }
-func CacheData(app conf.App, done <-chan bool) {
-	trackers, err := datastore.GetTrackers()
-	if err != nil {
-		log.Log.Error(err)
-	}
-	err = rcache.CacheDefaults(trackers)
+func CacheData(app conf.App, done <-chan struct{}) {
+	err := models.CacheTrackers()
 	if err != nil {
 		log.Log.Error(err)
 	}
 	CacheFleetTrackers()
 	for _ = range time.Tick(time.Duration(app.DS.Mysql.Interval) * time.Minute) {
-		trackers, err := datastore.GetTrackers()
+		err := models.CacheTrackers()
 		if err != nil {
 			log.Log.Error(err)
 		}
-		rcache.CacheDefaults(trackers)
 		CacheFleetTrackers()
 	}
 	<-done
 }
 
 func CacheFleetTrackers() {
-	t, err := datastore.CacheFleetTrackers()
+	t, err := models.CacheFleetTrackers()
 	if err != nil {
 
 		log.Log.Error(err)
 	}
-	err = rcache.AddFleetTrackers(t)
+	err = cache.AddFleetTrackers(t)
 	if err != nil {
 		log.Log.Error(err)
 	}
 }
 
-func CacheGroups(app conf.App, done <-chan bool) {
-	err := datastore.LoadGroups()
+func CacheGroups(app conf.App, done <-chan struct{}) {
+	err := models.LoadGroups()
 	if err != nil {
 		log.Log.Error(err)
 	}
 	for _ = range time.Tick(time.Duration(app.Cache.GroupInterval) * time.Minute) {
-		err := datastore.LoadGroups()
+		err := models.LoadGroups()
 		if err != nil {
 			log.Log.Error(err)
 		}

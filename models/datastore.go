@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -23,7 +22,7 @@ var (
 func Initialize(c conf.App) error {
 	var err error
 	config = c
-	log.FuncLog("models.Initialize", "Initialization", nil, nil)
+	log.Log.Info("Datastore initialization")
 	db, err = sql.Open("mysql", c.DS.Mysql.DSN)
 	if err != nil {
 		log.FuncLog("models.Initialize", "Initalization", nil, err)
@@ -37,11 +36,8 @@ func Initialize(c conf.App) error {
 	return nil
 }
 
-func GetTrackers() (map[int]cache.Vehicle, error) {
-	log.Log.WithFields(logrus.Fields{
-		"package": "models",
-	}).Debug("GetTrackers")
-	var pos map[int]cache.Vehicle = make(map[int]cache.Vehicle)
+func CacheTrackers() error {
+	log.Log.Info("Caching Default tracker data...")
 	query := queries["getTrackers"]
 	rows, err := db.Query(query)
 	defer rows.Close()
@@ -50,7 +46,7 @@ func GetTrackers() (map[int]cache.Vehicle, error) {
 			"package": "models",
 			"Error":   err.Error(),
 		}).Warn("GetTrackers")
-		return pos, err
+		return err
 	}
 	for rows.Next() {
 		var (
@@ -99,20 +95,14 @@ func GetTrackers() (map[int]cache.Vehicle, error) {
 			container[fmt.Sprintf("%v", key)] = fmt.Sprintf("%v", val)
 		}
 
-		jAdditionals, err := json.Marshal(container)
-		if err != nil {
-			panic(err)
-		}
-
-		v.Additional = string(jAdditionals)
+		v.Additional = make(map[string]string)
+		v.Additional = container
 		v.ParamID = strconv.Itoa(int(paramId.Int64))
 		v.Pid = int(pid.Int64)
-		pos[v.Id] = v
+		cache.VehicleList.Put(strconv.Itoa(v.Id), v)
 	}
-	log.Log.WithFields(logrus.Fields{
-		"package": "models",
-	}).Warn("GetTrackers")
-	return pos, err
+	log.Log.Info("Succesfully cached default values")
+	return nil
 }
 
 func UsrTrackers(name string) (usr cache.Usr, err error) {

@@ -2,9 +2,9 @@ package cache
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
+	"sort"
 	"strconv"
+	"time"
 
 	"github.com/Maksadbek/wherepo/conf"
 	"github.com/Maksadbek/wherepo/logger"
@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	config conf.App        // config
-	rc     ConcurrentRedis // redis client
+	config conf.App // config
+	pool   *redis.Pool
 )
 
 // structure for fleet
@@ -23,56 +23,71 @@ type Fleet struct {
 	LastReq int64            `json:"last_request"` // current unix time
 }
 
+func (f Fleet) MarshalJSON() ([]byte, error) {
+	m := struct {
+		ID     string `json:"id"`
+		Update []struct {
+			GroupName string `json:"groupName"`
+			Data      []Pos  `json:"data"`
+		} `json:"update"`
+	}{
+		ID: f.Id,
+	}
+	keys := make([]string, 0)
+	for groupName := range f.Update {
+		keys = append(keys, groupName)
+	}
+
+	sort.Strings(keys)
+	for _, groupName := range keys {
+		data := struct {
+			GroupName string `json:"groupName"`
+			Data      []Pos  `json:"data"`
+		}{
+			GroupName: groupName,
+		}
+		for _, position := range f.Update[groupName] {
+			data.Data = append(data.Data, position)
+		}
+		m.Update = append(m.Update, data)
+	}
+	return json.Marshal(m)
+}
+
 // structure for fleet
 type FleetTracker struct {
 	Fleet    string
 	Trackers []string
 }
 
-type Vehicle struct {
-	Id                  int    `json:"id"`
-	Fleet               int    `json:"fleet"`
-	Imei                string `json:"imei"`
-	Number              string `json:"number"`
-	Tracker_type        string `json:"tracker_type"`
-	Tracker_type_id     int    `json:"tracker_type_id"`
-	Device_type_id      int    `json:"device_type_id"` // if this value is more than 0, then it has fuel sensor
-	Name                string `json:"name"`
-	Owner               string `json:"owner"`
-	Active              string `json:"active"`
-	Additional          string `json:"additional"`
-	Customization       string `json:"customization"`
-	Group_id            int    `json:"group_id"`
-	Detector_fuel_id    int    `json:"detector_fuel_id"`
-	Detector_motion_id  int    `json:"detector_motion_id"`
-	Detector_dinamik_id int    `json:"detector_dinamik_id"`
-	Pid                 int    `json:"pid"`
-	Installed_sensor    string `json:"installed_sensor"`
-	Detector_agro_id    int    `json:"detector_agro_id"`
-	Car_health          string `json:"car_health"`
-	Color               string `json:"color"`
-	What_class          int    `json:"what_class"`
-	ParamID             string `json:"a_param_id"`
+func newPool(server string) *redis.Pool {
+	return &redis.Pool{
+		IdleTimeout: 240 * time.Second,
+		Dial: func() (redis.Conn, error) {
+			c, err := redis.Dial("tcp", server)
+			if err != nil {
+				return nil, err
+			}
+			return c, err
+		},
+	}
 }
-
 func Initialize(c conf.App) (err error) {
 	m := make(map[string]interface{})
 	m["config"] = c
-	logger.FuncLog("cache.Initialize", "Initialize", m, nil)
+	logger.Log.Info("Rcache initialization")
 	config = c
-	// connect to redis
-	err = rc.Start(c.DS.Redis.Host)
-	if err != nil {
-		logger.FuncLog("cache.Initialize", "Unable to connect redis server", nil, err)
-		return err
-	}
+	// create redis pool
+	pool = newPool(c.DS.Redis.Host)
 	return
 }
 
 // GetTrackers can be used to get array of tracker of particular fleet
 // start and stop are range values of list, default is 0,200, can be set from config
 func GetTrackers(fleet string, start, stop int) (trackers []string, err error) {
-	logger.FuncLog("cache.GetTrackers", conf.InfoListOfTrackers, nil, nil)
+	rc := pool.Get()
+	defer rc.Close()
+	logger.FuncLog("rcache.GetTrackers", conf.InfoListOfTrackers, nil, nil)
 	// get list of trackers ids from cache
 	v, err := redis.Strings(rc.Do("SMEMBERS", config.DS.Redis.FPrefix+":"+fleet)) //
 	if err != nil {
@@ -89,7 +104,9 @@ func GetTrackers(fleet string, start, stop int) (trackers []string, err error) {
 
 // PushRedis can be used to save fleet var into redis
 func PushRedis(fleet Fleet) (err error) {
-	logger.FuncLog("cache.PushRedis", conf.InfoPushFleet, nil, nil)
+	logger.FuncLog("rcache.PushRedis", conf.InfoPushFleet, nil, nil)
+	rc := pool.Get()
+	defer rc.Close()
 	// get list of trackers ids from cache
 	// range over map of Pos and push them
 	for _, x := range fleet.Update {
@@ -107,44 +124,14 @@ func PushRedis(fleet Fleet) (err error) {
 
 // AddFleetTrackers can be used to save list of trackers to redis
 func AddFleetTrackers(ftracker []FleetTracker) error {
-	r, err := redis.Dial("tcp", config.DS.Redis.Host)
-	if err != nil {
-		logger.FuncLog("cache.AddFleetTrackers", conf.ErrRedisConn, nil, err)
-		return err
-	}
-	defer r.Close()
-	// range over list
+	rc := pool.Get()
+	defer rc.Close()
 	for _, tracker := range ftracker {
 		// range over tracker data
+		rc.Do("DEL", "fleet"+":"+tracker.Fleet)
 		for _, x := range tracker.Trackers {
 			// add tracker to list
-			r.Do("SADD", "fleet"+":"+tracker.Fleet, x)
-		}
-	}
-	return nil
-}
-
-// CacheDefaults can be used to move all data in max_units table
-// in mysql to redis
-func CacheDefaults(trackers map[int]Vehicle) error {
-	// create separate connection for caching
-	r, err := redis.Dial("tcp", config.DS.Redis.Host)
-	if err != nil {
-		logger.FuncLog("cache.AddFleetTrackers", conf.ErrRedisConn, nil, err)
-		return err
-	}
-	defer r.Close()
-	logger.FuncLog("cache.CacheDefaults", "Caching Defaults", nil, nil)
-	// range over map of data
-	for id, x := range trackers {
-		st := reflect.ValueOf(x)
-		hashName := "max_unit_" + strconv.Itoa(id)
-		for i := 0; i < st.NumField(); i++ {
-			valueField := st.Field(i)
-			typeField := st.Type().Field(i)
-			key := fmt.Sprintf("%v", valueField.Interface())
-			value := typeField.Name
-			r.Do("HSET", hashName, value, key)
+			rc.Do("SADD", "fleet"+":"+tracker.Fleet, x)
 		}
 	}
 	return nil

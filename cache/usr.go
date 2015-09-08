@@ -17,7 +17,9 @@ type Usr struct {
 // UsrTrackers can be used to get info of user and list of its trackers
 func UsrTrackers(name string) (Usr, error) {
 	usr := Usr{}
-	logger.FuncLog("cache.UsrTrackers", "", nil, nil)
+	rc := pool.Get()
+	defer rc.Close()
+	logger.FuncLog("rcache.UsrTrackers", "", nil, nil)
 	// get user data
 	userb, err := redis.String(rc.Do("GET", config.DS.Redis.UPrefix+":"+name)) // prefix can be set from conf
 	if err != nil {
@@ -34,7 +36,8 @@ func UsrTrackers(name string) (Usr, error) {
 
 // SetUsrTrackers can be used to save user info in redis
 func SetUsrTrackers(usr Usr) error {
-	logger.FuncLog("cache.SetUsrTrackers", "", nil, nil)
+	rc := pool.Get()
+	defer rc.Close()
 	jusr, err := json.Marshal(usr)
 	if err != nil {
 		logger.FuncLog("cache.SetUsrTrackers", "", nil, err)
