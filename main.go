@@ -128,7 +128,7 @@ func worker(app conf.App) {
 
 func webHandlers() http.Handler {
 	web := http.NewServeMux()
-	// web.Handle("/", http.FileServer(http.Dir("static/")))
+	web.Handle("/", http.FileServer(http.Dir("ui/public")))
 	web.HandleFunc("/positions", route.GetPositionHandler)
 	web.HandleFunc("/signup", route.SignupHandler)
 	web.HandleFunc("/logout", route.LogoutHandler)
