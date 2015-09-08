@@ -13,8 +13,8 @@ var AppBar = Mui.AppBar,
     MenuItem= Mui.MenuItem, 
     IconButton= Mui.IconButton, 
     List  = Mui.List,
+    Paper = Mui.Paper,
     LeftNav= Mui.LeftNav;
-
 
 menuItems = [
     { 
@@ -99,9 +99,14 @@ var StatusApp = React.createClass({
                     title="Wherepo"
                     iconElementLeft={<IconButton></IconButton>}
                 />
-                <List>
-                    {content}
-                </List>
+
+                <div style={{width:"30%"}}> 
+                <Paper>
+                    <List>
+                        {content}
+                    </List>
+                </Paper>
+                </div>
             </div>
             )
     },
