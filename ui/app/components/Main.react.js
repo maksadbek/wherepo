@@ -6,6 +6,8 @@ var Sidebar = require('./Sidebar.react');
 var UserStore = require('../stores/UserStore');
 var Status = require('./CarStatus.react');
 var Mui  = require('material-ui');
+var GoogleMap = require('react-google-maps').GoogleMap;
+var Marker = require('react-google-maps').Marker;
 var ThemeManager = new Mui.Styles.ThemeManager();
 mui = require('material-ui')
 
@@ -59,8 +61,6 @@ var StatusApp = React.createClass({
             type: 'poly'
         };
         return {
-            bounds: {},
-            map: {},
             stats: {
                 id: '',
                 update: [],
@@ -73,17 +73,14 @@ var StatusApp = React.createClass({
         StatusStore.addChangeListener(this._onChange);
         UserStore.addChangeListener(this._onAuth);
         var mapOptions = { zoom: 10 };
-        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-        this.setState({map: map});
     },
 
     componentWillMount: function(){
        UserActions.Auth({
            login: "taxi",
-           uid: "taxi",
+           uid: "deadbeef",
            hash: "b5ea8985533defbf1d08d5ed2ac8fe9b",
-           fleet: "436",
-           groups: "1,2,3" // TODO ochirib tashlash
+           fleet: "436"
        });
     },
     componentWillUnmount: function(){
@@ -96,12 +93,20 @@ var StatusApp = React.createClass({
     },
     render: function(){
         var content = [];
+        var markers = [];
         var update = this.state.stats.update;
         var checked = this.state.isChildChecked;
-        var bounds = this.state.bounds;
-        var map = this.state.map;
         update.forEach(function(group){
-            content.push(<Sidebar bounds={bounds} map={map} key={group.groupName} stats={group}/>)
+            content.push(<Sidebar key={group.groupName} stats={group}/>)
+            group.data.forEach(function(vehicle){
+                markers.push({
+                    position:{
+                        lat: vehicle.latitude,
+                        lng: vehicle.longitude
+                    },
+                    key: vehicle.id
+                });
+            });
         });
         return (   
             <div>
@@ -111,15 +116,20 @@ var StatusApp = React.createClass({
                     title="Wherepo"
                     iconElementLeft={<IconButton></IconButton>}
                 />
-
-                <div style={{width:"30%"}}> 
-                    <div style={{border: "solid 1px #d9d9d9", height: "100vh", float: "left", overflow:"scroll"}}>
-                        <List>
-                            {content}
-                        </List>
-                    </div>
+                <div style={{border: "solid 1px #d9d9d9", height: "100vh", float: "left", width:"69%"}} id={"map-canvas"}>
+                    <GoogleMap containerProps={{style:{height:"100%"}}} ref="map" defaultZoom={3} 
+                            defaultCenter={{lat: -25.363882, lng: 131.044922}}>
+                            {markers.map(function(marker, index){
+                                    return(<Marker {...marker} />);
+                                })
+                            }
+                    </GoogleMap>
                 </div>
-                <div style={{border: "solid 1px #d9d9d9", height: "100vh", float: "left", width:"67%"}} id={"map-canvas"}></div>
+                <div style={{width: "30%", border: "solid 1px #d9d9d9", height: "100vh", float: "left", overflow:"scroll"}}>
+                    <List>
+                        {content}
+                    </List>
+                </div>
 
             </div>
             )
@@ -133,9 +143,7 @@ var StatusApp = React.createClass({
         setInterval(function(){
             StatusStore.sendAjax();
         }, 5000);
-    },
-    _map: {},
-    _bounds: {}
+    }
 });
 
 module.exports = StatusApp;
