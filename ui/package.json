@@ -7,10 +7,11 @@
   "dependencies": {
     "flux": "^2.0.1",
     "keymirror": "~0.1.0",
-    "object-assign": "^1.0.0",
     "lunr": "^0.5.11",
+    "material-ui": "^0.10.4",
+    "object-assign": "^1.0.0",
     "react": "^0.13.3",
-    "material-ui": "^0.10.4"
+    "react-google-maps": "^2.1.0"
   },
   "devDependencies": {
     "browserify": "~10.2.6",
@@ -30,10 +31,10 @@
     "app": "./app/app.js",
     "html": "*.html",
     "materialcss": "../public/bower_components/material-design-lite/material.css",
-    "materialjs":"../public/bower_components/material-design-lite/material.js"
+    "materialjs": "../public/bower_components/material-design-lite/material.js"
   },
   "dest": {
-    "path":"./public",
+    "path": "./public",
     "app": "app.js",
     "dist": "./public/javascripts/"
   },
