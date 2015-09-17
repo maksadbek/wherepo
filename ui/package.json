@@ -30,8 +30,8 @@
     "jsx": "./app/**/*.jsx",
     "app": "./app/app.js",
     "html": "*.html",
-    "materialcss": "../public/bower_components/material-design-lite/material.css",
-    "materialjs": "../public/bower_components/material-design-lite/material.js"
+    "flexboxcss": "./public/css/flexboxgrid.css",
+    "materialjs": "./public/bower_components/material-design-lite/material.js"
   },
   "dest": {
     "path": "./public",

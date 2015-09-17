@@ -7,6 +7,7 @@ var gulp = require('gulp'),
     package  = require('./package.json');
 
 gulp.task('js', function(){
+    var extensions = ['.js','.json','.es6'];
     return browserify(package.paths.app)
         .transform(reactify)
         .bundle()
@@ -18,21 +19,21 @@ gulp.task('inject', function(){
     return gulp.src("index.html")
             .pipe(
                     inject(
-                        gulp.src(package.paths.materialcss,{
+                        gulp.src(package.paths.flexboxcss,{
                             read: false
                         }), {
-                            name: "materialcss",
+                            name: "flexboxcss",
                             relative: true
                         })
                  )
-            .pipe(
-                    inject(
-                        gulp.src(package.paths.materialjs,{
-                            read: false
-                        }), {
-                            name: "materialjs",
-                            relative: true
-                        })
-                )
+           // .pipe(
+           //         inject(
+           //             gulp.src(package.paths.materialjs,{
+           //                 read: false
+           //             }), {
+           //                 name: "materialjs",
+           //                 relative: true
+           //             })
+           //     )
             .pipe(gulp.dest(package.dest.path))
 });
