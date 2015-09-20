@@ -1,10 +1,11 @@
-var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EventEmitter = require('events').EventEmitter;
-var StatusConstants = require('../constants/StatusConstants');
-var UserConstants = require('../constants/UserConstants');
-var UserStore = require('./UserStore');
 var assign = require('object-assign');
 var lunr = require('lunr');
+
+var AppDispatcher = require('../dispatcher/AppDispatcher');
+
+var StatusConstants = require('../constants/StatusConstants');
+var UserConstants = require('../constants/UserConstants');
 
 var CHANGE_EVENT = 'change';
 
@@ -93,10 +94,10 @@ var StatusStore = assign({}, EventEmitter.prototype, {
             StatusStore.emitChange();
             return _carStatus;
         };
-        xhr.setRequestHeader("X-Access-Token", UserStore.token);
+        xhr.setRequestHeader("X-Access-Token", locaStorage.token);
         xhr.send(JSON.stringify({
-            fleetID: UserStore.clientInfo.fleet, // TODO use UserStore.clientInfo.fleet,
-            userName: UserStore.clientInfo.login,
+            fleetID: localStorage.getItem("fleet"),
+            userName: localStorage.getItem("login")
             })
         );
     },

@@ -1,15 +1,15 @@
 var React = require('react');
-var StatusStore = require('../stores/StatusStore');
-var CarActions = require('../actions/StatusActions');
-var UserActions = require('../actions/UserActions');
-var Sidebar = require('./Sidebar.react');
-var UserStore = require('../stores/UserStore');
-var Status = require('./CarStatus.react');
 var Mui  = require('material-ui');
 var GoogleMap = require('react-google-maps').GoogleMap;
 var Marker = require('react-google-maps').Marker;
+
+var StatusStore = require('../stores/StatusStore');
+var LoginStore = require('../stores/LoginStore');
+
+
+var Sidebar = require('./Sidebar.react');
+
 var ThemeManager = new Mui.Styles.ThemeManager();
-mui = require('material-ui')
 
 var AppBar = Mui.AppBar,
     MenuItem= Mui.MenuItem, 
@@ -45,15 +45,7 @@ function getAllStatuses(){
     return StatusStore.getAll()
 }
 
-var StatusApp = React.createClass({
-    childContextTypes: {
-          muiTheme: React.PropTypes.object
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: ThemeManager.getCurrentTheme()
-        };
-    },
+var Main = React.createClass({
     getInitialState: function(){
         this._bounds = new google.maps.LatLngBounds();
         var shape = {
@@ -68,28 +60,34 @@ var StatusApp = React.createClass({
             isChildChecked: false
         }
     },
-
+    childContextTypes: {
+          muiTheme: React.PropTypes.object
+    },
+    getChildContext: function() {
+        return {
+            muiTheme: ThemeManager.getCurrentTheme()
+        };
+    },
     componentDidMount: function(){
         StatusStore.addChangeListener(this._onChange);
-        UserStore.addChangeListener(this._onAuth);
         var mapOptions = { zoom: 10 };
     },
-
-    componentWillMount: function(){
-       UserActions.Auth({
-           login: "taxi",
-           uid: "deadbeef",
-           hash: "b5ea8985533defbf1d08d5ed2ac8fe9b",
-           fleet: "436"
-       });
-    },
+    //componentWillMount: function(){
+    //   LoginActions.Auth({
+    //       login: "taxi",
+    //       uid: "deadbeef",
+    //       hash: "b5ea8985533defbf1d08d5ed2ac8fe9b",
+    //       fleet: "436"
+    //   });
+    //},
     componentWillUnmount: function(){
         StatusStore.removeChangeListener(this._onChange);
-        UserStore.removeChangeListener(this._onAuth);
     },
     toggleLeftNav: function(){
-        console.log(this.refs.leftNav);
         React.findDOMNode(this.refs.leftNav).toggle()
+    },
+    _onChange: function(){
+        this.setState({stats: getAllStatuses()});
     },
     render: function(){
         var content = [];
@@ -133,17 +131,7 @@ var StatusApp = React.createClass({
 
             </div>
             )
-    },
-    _onChange: function(){
-        this.setState({stats: getAllStatuses()});
-    },
-    _onAuth: function(){
-        console.log("fuck");
-        StatusStore.sendAjax();
-        setInterval(function(){
-            StatusStore.sendAjax();
-        }, 5000);
     }
 });
 
-module.exports = StatusApp;
+module.exports = Main;

@@ -2,10 +2,10 @@ var React = require('react');
 var Mui  = require('material-ui');
 
 var StatusStore = require('../stores/StatusStore');
-var UserStore = require('../stores/UserStore');
+var LoginStore = require('../stores/LoginStore');
 
 var CarActions = require('../actions/StatusActions');
-var UserActions = require('../actions/UserActions');
+var LoginActions = require('../actions/LoginActions');
 
 var ThemeManager = new Mui.Styles.ThemeManager();
 
@@ -13,6 +13,11 @@ var TextField = Mui.TextField,
     RaisedButton = Mui.RaisedButton;
 
 var Login = React.createClass({
+    getInitialState: function(){
+        return {
+            errors: LoginStore.getErrors()
+        }
+    },
     childContextTypes: {
           muiTheme: React.PropTypes.object
     },
@@ -20,6 +25,11 @@ var Login = React.createClass({
         return {
             muiTheme: ThemeManager.getCurrentTheme()
         };
+    },
+    handleSubmit: function(){
+        var email = this.refs.email.target, 
+            secret = this.refs.secret.target;
+        LoginActions.sendSignup({ email: email, secret: secret });
     },
     render: function(){
         return (   
@@ -30,12 +40,12 @@ var Login = React.createClass({
                     <div>
                         <h1>Sign in</h1>
                         <form>
-                            <TextField hintText="email" />
+                            <TextField ref="email" hintText="email" />
                         </form>
                         <form>
-                            <TextField type="password" />
+                            <TextField ref="secret" type="password" />
                             <footer className="text-center">
-                                <RaisedButton label="Sign up" secondary={true} type="submit"/>
+                                <RaisedButton label="Sign up" onClick={this.handleSubmit} secondary={true} type="submit"/>
                             </footer>
                         </form>
                     </div>

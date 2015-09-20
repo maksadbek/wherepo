@@ -1,32 +1,28 @@
 var React = require('react')
-var Router = require('react-router');
+var IndexRoute = require('react-router').IndexRoute;
+var Route = require('react-router').Route;
+var Router = require('react-router').Router;
 
 var Main = require('./components/Main.react');
 var Login = require('./components/Login.react');
 
+var requireAuth = require('./utils/requireAuth');
+
 var injectTapEventPlugin = require('react-tap-event-plugin');
 
-var DefaultRoute = Router.DefaultRoute;
-var Route = Router.Route;
-var RouteHandler = Router.RouteHandler;
 
 var App = React.createClass({
     render: function(){
-        return <RouteHandler/>;
+        return this.props.children;
     }
 });
 
-var routes = (
-    <Route handler={App} name="app" path="/">
-        <Route handler={Main} name="main" path="/mon" />
-        <Route handler={Login} name="login" path="/auth" />
-        <DefaultRoute handler={Main} />
-    </Route>
-)
-
-var router = Router.create(routes, Router.HashLocation);
-
-router.run(function(Root){
-    injectTapEventPlugin();
-    React.render(<Root />, document.getElementById('app'));
-});
+React.render((
+    <Router>
+        <Route path="/" component={App}>
+            <IndexRoute component={Main} onEnter={requireAuth}/>
+            <Route component={Main} path="/mon" onEnter={requireAuth} />
+            <Route component={Login} path="/auth" />
+        </Route>   
+    </Router>
+), document.getElementById('app'));
