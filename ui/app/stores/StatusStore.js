@@ -94,10 +94,10 @@ var StatusStore = assign({}, EventEmitter.prototype, {
             StatusStore.emitChange();
             return _carStatus;
         };
-        xhr.setRequestHeader("X-Access-Token", locaStorage.token);
+        xhr.setRequestHeader("X-Access-Token", localStorage.token);
         xhr.send(JSON.stringify({
-            fleetID: localStorage.getItem("fleet"),
-            userName: localStorage.getItem("login")
+                fleetID: localStorage.getItem("fleet"),
+                userName: localStorage.getItem("login")
             })
         );
     },
@@ -149,10 +149,6 @@ var StatusStore = assign({}, EventEmitter.prototype, {
     },
     dispatcherIndex: AppDispatcher.register(function(action){
         switch(action.actionType){
-            case StatusConstants.SetClientInfo:
-                SetClientInfo(action.info);
-                StatusStore.emitChange();
-                break;
             case StatusConstants.AddMarker:
                 // the structure of info must be:
                 // { id: "1234", pos: { lat: "123", lng:...}}
