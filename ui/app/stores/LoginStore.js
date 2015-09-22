@@ -30,7 +30,7 @@ var LoginStore = assign({}, EventEmitter.prototype, {
             case LoginConstants.SET_LOGGED_IN:
                 localStorage.setItem("token", action.payload.token);
                 localStorage.setItem("fleet", action.payload.fleet);
-                localStorage.setItem("login", action.payload.login);
+                localStorage.setItem("login", action.payload.email);
                 LoginStore.emitChange();
                 break;
             case LoginConstants.SET_LOGGED_OUT:
