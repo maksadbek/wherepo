@@ -8,9 +8,12 @@ var LoginUtils = {
         xhr.onload = function() {
             resp = JSON.parse(xhr.responseText)
             if (xhr.status === 200 ) {
-                success();
+                success({
+                    token: resp.token,
+                    email: payload.email
+                });
             } else if (xhr.status !== 200) {
-                fail();
+                fail(resp);
             }
         };
         xhr.send(
