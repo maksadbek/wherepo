@@ -32,14 +32,13 @@ var Sidebar = React.createClass({
         var statuses = [];
         var stat = this.props.stats.data;
         var group = this.props.stats.groupName;
-        var checked = this.state.isChildChecked;
         return ( <ListItem open={true} primaryText={group} >
                     <Checkbox style={{float: "left", width: "auto"}} name="checkbox"></Checkbox>
                     {
                         stat.map(function(vehicle){
-                            return(<SidebarItem vehicle={vehicle} />);
+                            return( <ListItem  key={vehicle.id} primaryText={vehicle.number} />);
                         })
-                    } 
+                    }
                 </ListItem>
         );
     },

@@ -27,8 +27,8 @@ var Login = React.createClass({
         };
     },
     handleSubmit: function(){
-        var email = this.refs.email.target, 
-            secret = this.refs.secret.target;
+        var email = this.refs.email.getValue(), 
+            secret = this.refs.secret.getValue();
         LoginActions.sendSignup({ email: email, secret: secret });
     },
     render: function(){

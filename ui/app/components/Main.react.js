@@ -72,14 +72,18 @@ var Main = React.createClass({
         StatusStore.addChangeListener(this._onChange);
         var mapOptions = { zoom: 10 };
     },
-    //componentWillMount: function(){
+    componentWillMount: function(){
     //   LoginActions.Auth({
     //       login: "taxi",
     //       uid: "deadbeef",
     //       hash: "b5ea8985533defbf1d08d5ed2ac8fe9b",
     //       fleet: "436"
     //   });
-    //},
+    StatusStore.sendAjax();
+    setInterval(function(){
+        StatusStore.sendAjax();
+    }, 5000);
+    },
     componentWillUnmount: function(){
         StatusStore.removeChangeListener(this._onChange);
     },
@@ -87,7 +91,7 @@ var Main = React.createClass({
         React.findDOMNode(this.refs.leftNav).toggle()
     },
     _onChange: function(){
-        this.setState({stats: getAllStatuses()});
+        this.setState({stats: StatusStore.getAll()});
     },
     render: function(){
         var content = [];
