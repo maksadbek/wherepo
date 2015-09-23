@@ -16,6 +16,7 @@ var AppBar = Mui.AppBar,
     IconButton= Mui.IconButton, 
     List  = Mui.List,
     Paper = Mui.Paper,
+    NavigationMenu = Mui.Icons.NavigationMenu,
     LeftNav= Mui.LeftNav;
 
 menuItems = [
@@ -88,7 +89,7 @@ var Main = React.createClass({
         StatusStore.removeChangeListener(this._onChange);
     },
     toggleLeftNav: function(){
-        React.findDOMNode(this.refs.leftNav).toggle()
+        this.refs.leftNav.toggle();
     },
     _onChange: function(){
         this.setState({stats: StatusStore.getAll()});
@@ -114,9 +115,8 @@ var Main = React.createClass({
             <div>
                 <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
                 <AppBar
-                    onLeftIconButtonTouchTap={this.toggleLeftNav}
                     title="Wherepo"
-                    iconElementLeft={<IconButton></IconButton>}
+                    iconElementLeft={<IconButton onClick={this.toggleLeftNav} ><NavigationMenu /></IconButton>}
                 />
                 <div style={{border: "solid 1px #d9d9d9", height: "100vh", float: "left", width:"69%"}} id={"map-canvas"}>
                     <GoogleMap containerProps={{style:{height:"100%"}}} ref="map" defaultZoom={3} 
