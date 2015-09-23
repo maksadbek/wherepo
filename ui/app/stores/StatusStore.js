@@ -15,11 +15,11 @@ var _search = false;
 var _searchCase = [];
 var _searchRes;
 
-var host = "217.29.118.23";
+var host = "beta.maxtrack.uz";
 if(typeof(go_mon_host) !== "undefined"){
     host = go_mon_host;
 }
-var positionURL = "http://"+host+":8080/positions";
+var positionURL = "https://"+host+":8080/positions";
 
 var searchIdx = lunr(function(){
     this.field('number');

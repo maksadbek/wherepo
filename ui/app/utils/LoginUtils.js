@@ -1,5 +1,5 @@
-var host = "217.29.118.23";
-var authURL = "http://"+host+":8080/signup";
+var host = "beta.maxtrack.uz";
+var authURL = "https://"+host+":8080/signup";
 var LoginUtils = {
     sendSignup: function(payload, success, fail){
         var xhr = new XMLHttpRequest();
