@@ -1,3 +1,5 @@
+var md5 = require('md5');
+
 var host = "beta.maxtrack.uz";
 var authURL = "https://"+host+":8080/signup";
 var LoginUtils = {
@@ -19,7 +21,7 @@ var LoginUtils = {
         xhr.send(
             JSON.stringify({
                 user: payload.email,
-                hash: payload.secret,
+                hash: md5(payload.secret),
                 uid: Math.random().toString(36).substring(8)
             })
         );
