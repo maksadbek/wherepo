@@ -2,6 +2,7 @@ var React = require('react');
 var Mui  = require('material-ui');
 var GoogleMap = require('react-google-maps').GoogleMap;
 var Marker = require('react-google-maps').Marker;
+var ReactGridLayout = require('react-grid-layout');
 
 var StatusStore = require('../stores/StatusStore');
 var LoginStore = require('../stores/LoginStore');
@@ -115,24 +116,37 @@ var Main = React.createClass({
             <div>
                 <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
                 <AppBar
-                    title="Wherepo"
+                    title="GPSimple"
                     iconElementLeft={<IconButton onClick={this.toggleLeftNav} ><NavigationMenu /></IconButton>}
                 />
-                <div style={{border: "solid 1px #d9d9d9", height: "100vh", float: "left", width:"69%"}} id={"map-canvas"}>
-                    <GoogleMap containerProps={{style:{height:"100%"}}} ref="map" defaultZoom={3} 
-                            defaultCenter={{lat: -25.363882, lng: 131.044922}}>
-                            {markers.map(function(marker, index){
-                                    return(<Marker {...marker} />);
-                                })
-                            }
-                    </GoogleMap>
-                </div>
-                <div style={{width: "30%", border: "solid 1px #d9d9d9", height: "100vh", float: "left", overflow:"scroll"}}>
-                    <List>
-                        {content}
-                    </List>
-                </div>
-
+                <ReactGridLayout cols={12} 
+                style={{maxHeight:900}}
+                  autoSize={true}
+                  margin={[0, 0]}
+                  minH={1}
+                  maxH={900}
+                  minW={1}
+                  isDraggable={false}
+                  isResizable={false}
+                  useCSSTransforms={true}
+                  listenToWindowResize={true}
+                  verticalCompact={true}
+                >
+                    <div _grid={{x:0, y:0, w:9, h:20}} key={1} style={{border: "solid 1px #d9d9d9"}} id={"map-canvas"}>
+                        <GoogleMap containerProps={{style:{height:"100%"}}} ref="map" defaultZoom={3} 
+                                defaultCenter={{lat: 69.2578129, lng: 41.3079867}}>
+                                {markers.map(function(marker, index){
+                                        return(<Marker {...marker} />);
+                                    })
+                                }
+                        </GoogleMap>
+                    </div>
+                    <div _grid={{x:10, y:0, w:3, h:20}} key={2} style={{border: "solid 1px #d9d9d9", overflow:"scroll"}}>
+                        <List>
+                            {content}
+                        </List>
+                    </div>
+                </ReactGridLayout>
             </div>
             )
     }
