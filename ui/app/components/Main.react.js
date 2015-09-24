@@ -15,7 +15,9 @@ var ThemeManager = new Mui.Styles.ThemeManager();
 var AppBar = Mui.AppBar,
     MenuItem= Mui.MenuItem, 
     IconButton= Mui.IconButton, 
+    IconMenu = Mui.IconMenu,
     List  = Mui.List,
+    IconMenuItem = require('material-ui/lib/menus/menu-item'),
     Paper = Mui.Paper,
     NavigationMenu = Mui.Icons.NavigationMenu,
     LeftNav= Mui.LeftNav;
@@ -116,6 +118,12 @@ var Main = React.createClass({
                 <AppBar
                     title="GPSimple"
                     iconElementLeft={<IconButton onClick={this.toggleLeftNav} ><NavigationMenu /></IconButton>}
+                    iconElementRight={
+                        <IconMenu iconButtonElement={<IconButton iconClassName="material-icons">more_vert</IconButton>}>
+                            <IconMenuItem index={1} primaryText="Settings" />
+                            <IconMenuItem index={2} primaryText="Sign out" />
+                        </IconMenu>
+                    }
                 />
                 <ReactGridLayout cols={12}
                   autoSize={true}
