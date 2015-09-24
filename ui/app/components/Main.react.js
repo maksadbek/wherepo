@@ -23,22 +23,20 @@ var AppBar = Mui.AppBar,
 menuItems = [
     { 
         type: MenuItem.Types.SUBHEADER, 
-        text: 'Resources' 
+        text: 'Menu' 
     },
     { 
-        type: MenuItem.Types.LINK, 
         payload: 'https://github.com', 
-        text: 'GitHub' 
-    },
-    { 
-        text: 'Disabled', 
+        text: 'Monitoring',
         disabled: true 
     },
     { 
-        type: MenuItem.Types.LINK, 
+        text: 'Settings', 
+        payload: 'https://github.com', 
+    },
+    { 
         payload: 'https://www.google.com', 
-        text: 'Disabled Link', 
-        disabled: true 
+        text: 'Help' 
     },
 ];
 
@@ -119,8 +117,7 @@ var Main = React.createClass({
                     title="GPSimple"
                     iconElementLeft={<IconButton onClick={this.toggleLeftNav} ><NavigationMenu /></IconButton>}
                 />
-                <ReactGridLayout cols={12} 
-                style={{maxHeight:900}}
+                <ReactGridLayout cols={12}
                   autoSize={true}
                   margin={[0, 0]}
                   minH={1}
@@ -132,17 +129,18 @@ var Main = React.createClass({
                   listenToWindowResize={true}
                   verticalCompact={true}
                 >
-                    <div _grid={{x:0, y:0, w:9, h:20}} key={1} style={{border: "solid 1px #d9d9d9"}} id={"map-canvas"}>
-                        <GoogleMap containerProps={{style:{height:"100%"}}} ref="map" defaultZoom={3} 
-                                defaultCenter={{lat: 69.2578129, lng: 41.3079867}}>
+                    <div _grid={{maxH:screen.height, x:0, y:0, w:9, h:5}} key={1} style={{border: "solid 1px #d9d9d9"}} id={"map-canvas"}>
+                        <GoogleMap containerProps={{style:{height:"100%"}}} ref="map" defaultZoom={12} 
+                                defaultCenter={{lat: 41.3079867, lng: 69.2578129}}>
                                 {markers.map(function(marker, index){
                                         return(<Marker {...marker} />);
                                     })
                                 }
                         </GoogleMap>
                     </div>
-                    <div _grid={{x:10, y:0, w:3, h:20}} key={2} style={{border: "solid 1px #d9d9d9", overflow:"scroll"}}>
-                        <List>
+                    <div _grid={{maxH:screen.height, x:10, y:0, w:3, h:5}} key={2} 
+                        style={{borderRadius: 0, border: "solid 1px #d9d9d9", overflow:"scroll"}}>
+                        <List style={{borderRadius: 0}} >
                             {content}
                         </List>
                     </div>
