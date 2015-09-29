@@ -118,17 +118,29 @@ var Main = React.createClass({
         return (   
             <div>
             <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
-            <AppBar title="GPSimple"
-                    iconElementLeft={<IconButton onClick={this.toggleLeftNav} ><NavigationMenu /></IconButton>}
-                    iconElementRight={
-                        <IconMenu iconButtonElement={<IconButton iconClassName="material-icons">more_vert</IconButton>}>
-                            <IconMenuItem index={1} primaryText="Settings" />
-                            <IconMenuItem onClick={this.logOut} index={2} primaryText="Sign out" />
-                        </IconMenu>
-                    }
-            />
             <div className="app">
                 <section className="main">
+                   <header className="toolbar row">
+                      <div className="toolbar__controls col-xs">
+                            <div className="toolbar__controls__buttons pull-left">
+                                <button onClick={this.toggleLeftNav} className="button button--icon">
+                                  <i className="material-icons">menu</i>
+                                </button>
+                            </div>
+                      </div>
+
+                      <div className="toolbar__controls">
+                            <div className="toolbar__controls__buttons pull-right">
+                                  <button className="button button--icon">
+                                    <i className="material-icons">more_vert</i>
+                                  </button>
+                            </div>
+                            <div className="toolbar__controls__search pull-right">
+                              <i className="material-icons">search</i>
+                              <input className="input input--search" type="search"/>
+                            </div>
+                      </div>
+                    </header> 
                     <div className="flexrow">
                         <section className="dialog">
                             <div id={"map-canvas"}>
