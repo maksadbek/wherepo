@@ -77,7 +77,7 @@ var Main = React.createClass({
     },
     componentWillMount: function(){
     StatusStore.sendAjax();
-    setInterval(function(){
+    this.sendAjaxInterval = setInterval(function(){
         StatusStore.sendAjax();
     }, 5000);
     },
@@ -89,13 +89,14 @@ var Main = React.createClass({
     },
     _onChange: function(){
         if(!LoginStore.isLoggedIn()){
+            clearInterval(this.sendAjaxInterval);
             this.props.history.replaceState(null, "/auth");
             return;
         }
         this.setState({stats: StatusStore.getAll()});
     },
     logOut: function(){
-       LoginActions.logOut();
+        LoginActions.logOut();
     },
     render: function(){
         var content = [];
