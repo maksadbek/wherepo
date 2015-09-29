@@ -7,6 +7,7 @@ var ReactGridLayout = require('react-grid-layout');
 var StatusStore = require('../stores/StatusStore');
 var LoginStore = require('../stores/LoginStore');
 
+var LoginActions = require('../actions/LoginActions');
 
 var Sidebar = require('./Sidebar.react');
 
@@ -75,12 +76,6 @@ var Main = React.createClass({
         var mapOptions = { zoom: 10 };
     },
     componentWillMount: function(){
-    //   LoginActions.Auth({
-    //       login: "taxi",
-    //       uid: "deadbeef",
-    //       hash: "b5ea8985533defbf1d08d5ed2ac8fe9b",
-    //       fleet: "436"
-    //   });
     StatusStore.sendAjax();
     setInterval(function(){
         StatusStore.sendAjax();
@@ -93,7 +88,14 @@ var Main = React.createClass({
         this.refs.leftNav.toggle();
     },
     _onChange: function(){
+        if(!LoginStore.isLoggedIn()){
+            this.props.history.replaceState(null, "/auth");
+            return;
+        }
         this.setState({stats: StatusStore.getAll()});
+    },
+    logOut: function(){
+       LoginActions.logOut();
     },
     render: function(){
         var content = [];
@@ -121,7 +123,7 @@ var Main = React.createClass({
                     iconElementRight={
                         <IconMenu iconButtonElement={<IconButton iconClassName="material-icons">more_vert</IconButton>}>
                             <IconMenuItem index={1} primaryText="Settings" />
-                            <IconMenuItem index={2} primaryText="Sign out" />
+                            <IconMenuItem onClick={this.logOut} index={2} primaryText="Sign out" />
                         </IconMenu>
                     }
                 />
@@ -137,7 +139,7 @@ var Main = React.createClass({
                   listenToWindowResize={true}
                   verticalCompact={true}
                 >
-                    <div _grid={{maxH:screen.height, x:0, y:0, w:9, h:5}} key={1} style={{border: "solid 1px #d9d9d9"}} id={"map-canvas"}>
+                    <div _grid={{x:0, y:0, w:9, h:4.8}} key={1} style={{border: "solid 1px #d9d9d9"}} id={"map-canvas"}>
                         <GoogleMap containerProps={{style:{height:"100%"}}} ref="map" defaultZoom={12} 
                                 defaultCenter={{lat: 41.3079867, lng: 69.2578129}}>
                                 {markers.map(function(marker, index){
@@ -146,7 +148,7 @@ var Main = React.createClass({
                                 }
                         </GoogleMap>
                     </div>
-                    <div _grid={{maxH:screen.height, x:10, y:0, w:3, h:5}} key={2} 
+                    <div _grid={{x:10, y:0, w:3, h:4.8}} key={2} 
                         style={{borderRadius: 0, border: "solid 1px #d9d9d9", overflow:"scroll"}}>
                         <List style={{borderRadius: 0}} >
                             {content}
