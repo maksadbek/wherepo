@@ -45,24 +45,48 @@ var Login = React.createClass({
     },
     render: function(){
         return (   
-            <div className="row center-xs middle-xs">
-                <div className="col-xs row center-xs middle-xs">
-                </div>
-                <div className="col-xs-6 col-md-4 row center-xs middle-xs">
-                    <div>
-                        <h1>Sign in</h1>
-                        <form>
-                            <TextField ref="email" hintText="email" />
-                        </form>
-                        <form>
-                            <TextField ref="secret" type="password" />
-                            <footer className="text-center">
-                                <RaisedButton label="Sign up" onClick={this.handleSubmit} secondary={true} type="submit"/>
-                            </footer>
-                        </form>
+            <section className="login-new row center-xs middle-xs">
+                  <div className="login-new__welcome col-xs row center-xs middle-xs">
+                      <article>
+                        <h1 className="login-new__heading">Welcome to <strong>GPSimple</strong></h1>
+                        <p>
+                          GPSimple brings all your business network connections into one place,
+                          makes it easily accessible wherever you go.
+                        </p>
+                        <p>
+                          Our aim is to make your work easier, reduce your email amount,
+                          make the business world closer by reducing time to find right contacts.
+                        </p>
+                      </article>
+                      <footer>
+                        <div className="pull-left">
+                          GPSimple LLC © 2015
+                        </div>
+                        <div className="pull-right">
+                          <a href="//gpsimple.io/ios">iPhone</a>
+                          <a href="//gpsimple.io/android">Android</a>
+                        </div>
+                      </footer>
                     </div>
-                </div>
-            </div>
+
+                    <div className="login-new__form col-lg-6 col-xs-6 col-md-4 row center-xs middle-xs">
+                        <div>
+                            <h1 className="login-new__heading" >Sign in</h1>
+                            <form>
+                                <TextField className="login__form__input" ref="email" hintText="email" />
+                            </form>
+                            <form>
+                                <TextField className="login__form__input" ref="secret" type="password" />
+                                <footer className="text-center">
+                                    <RaisedButton label="sign up"
+                                            onClick={this.handleSubmit} 
+                                            secondary={true} 
+                                            type="submit" />
+                                </footer>
+                            </form>
+                        </div>
+                    </div>
+            </section>
         )
     }
 });
