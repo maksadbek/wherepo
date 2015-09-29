@@ -26,10 +26,22 @@ var Login = React.createClass({
             muiTheme: ThemeManager.getCurrentTheme()
         };
     },
-    handleSubmit: function(){
+    componentWillUnmount: function(){
+        LoginStore.removeChangeListener(this.onChange);
+    },
+    componentDidMount: function(){
+        LoginStore.addChangeListener(this.onChange);
+    },
+    handleSubmit: function(event){
+        event.preventDefault();
         var email = this.refs.email.getValue(), 
             secret = this.refs.secret.getValue();
         LoginActions.sendSignup({ email: email, secret: secret });
+    },
+    onChange: function(){
+        if(LoginStore.isLoggedIn()){
+            this.props.history.replaceState(null, "/mon");
+        }
     },
     render: function(){
         return (   
