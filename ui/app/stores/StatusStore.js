@@ -15,7 +15,7 @@ var _search = false;
 var _searchCase = [];
 var _searchRes;
 
-var host = "beta.maxtrack.uz";
+var host = "online.maxtrack.uz";
 if(typeof(go_mon_host) !== "undefined"){
     host = go_mon_host;
 }
