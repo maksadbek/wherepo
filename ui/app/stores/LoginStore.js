@@ -41,6 +41,10 @@ var LoginStore = assign({}, EventEmitter.prototype, {
                 errors.signup = "invalid username or password";
                 LoginStore.emitChange();
                 break
+            case LoginConstants.SET_LOGGED_OUT:
+                localStorage.clear();
+                LoginStore.emitChange();
+                break;
         }
         return true;
     }),
