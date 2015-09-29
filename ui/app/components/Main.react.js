@@ -131,9 +131,11 @@ var Main = React.createClass({
 
                       <div className="toolbar__controls">
                             <div className="toolbar__controls__buttons pull-right">
-                                  <button className="button button--icon">
-                                    <i className="material-icons">more_vert</i>
-                                  </button>
+                        <IconMenu iconButtonElement={<IconButton iconClassName="material-icons">more_vert</IconButton>}>
+                            <IconMenuItem index={1} primaryText="Settings" />
+                            <IconMenuItem onClick={this.logOut} index={2} primaryText="Sign out" />
+                        </IconMenu>
+
                             </div>
                             <div className="toolbar__controls__search pull-right">
                               <i className="material-icons">search</i>
