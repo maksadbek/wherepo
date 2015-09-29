@@ -21,6 +21,11 @@ var LoginActions = {
                 })
             }
         );
+    },
+    logOut: function(){
+        AppDispatcher.dispatch({
+            actionType: LoginConstants.SET_LOGGED_OUT
+        });
     }
 };
 
