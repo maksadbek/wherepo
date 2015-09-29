@@ -117,9 +117,8 @@ var Main = React.createClass({
         });
         return (   
             <div>
-                <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
-                <AppBar
-                    title="GPSimple"
+            <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
+            <AppBar title="GPSimple"
                     iconElementLeft={<IconButton onClick={this.toggleLeftNav} ><NavigationMenu /></IconButton>}
                     iconElementRight={
                         <IconMenu iconButtonElement={<IconButton iconClassName="material-icons">more_vert</IconButton>}>
@@ -127,35 +126,31 @@ var Main = React.createClass({
                             <IconMenuItem onClick={this.logOut} index={2} primaryText="Sign out" />
                         </IconMenu>
                     }
-                />
-                <ReactGridLayout cols={12}
-                  autoSize={true}
-                  margin={[0, 0]}
-                  minH={1}
-                  maxH={900}
-                  minW={1}
-                  isDraggable={false}
-                  isResizable={false}
-                  useCSSTransforms={true}
-                  listenToWindowResize={true}
-                  verticalCompact={true}
-                >
-                    <div _grid={{x:0, y:0, w:9, h:4.8}} key={1} style={{border: "solid 1px #d9d9d9"}} id={"map-canvas"}>
-                        <GoogleMap containerProps={{style:{height:"100%"}}} ref="map" defaultZoom={12} 
-                                defaultCenter={{lat: 41.3079867, lng: 69.2578129}}>
-                                {markers.map(function(marker, index){
-                                        return(<Marker {...marker} />);
-                                    })
-                                }
-                        </GoogleMap>
+            />
+            <div className="app">
+                <section className="main">
+                    <div className="flexrow">
+                        <section className="dialog">
+                            <div id={"map-canvas"}>
+                                <GoogleMap containerProps={{style:{height:"100vh"}}} ref="map" defaultZoom={12} 
+                                        defaultCenter={{lat: 41.3079867, lng: 69.2578129}}>
+                                        {markers.map(function(marker, index){
+                                                return(<Marker {...marker} />);
+                                            })
+                                        }
+                                </GoogleMap>
+                            </div>
+                        </section>
+                        <section className="activity activity--shown">
+                            <div className="activity__body group_profile">
+                                <List style={{borderRadius: 0}} >
+                                    {content}
+                                </List>
+                            </div>
+                        </section>
                     </div>
-                    <div _grid={{x:10, y:0, w:3, h:4.8}} key={2} 
-                        style={{borderRadius: 0, border: "solid 1px #d9d9d9", overflow:"scroll"}}>
-                        <List style={{borderRadius: 0}} >
-                            {content}
-                        </List>
-                    </div>
-                </ReactGridLayout>
+                </section>
+            </div>
             </div>
             )
     }
