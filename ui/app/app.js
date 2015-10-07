@@ -26,4 +26,4 @@ React.render((
             <Route component={Login} path="/auth" onEnter={signedUp} />
         </Route>   
     </Router>
-), document.getElementById('actor-web-app'));
+), document.getElementById('web-app'));

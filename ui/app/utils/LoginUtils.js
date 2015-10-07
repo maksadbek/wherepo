@@ -1,7 +1,7 @@
 var md5 = require('md5');
 
 var host = "online.maxtrack.uz";
-var authURL = "https://"+host+":8080/signup";
+var authURL = "http://"+host+":8080/signup";
 var LoginUtils = {
     sendSignup: function(payload, success, fail){
         var xhr = new XMLHttpRequest();

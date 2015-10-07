@@ -43,11 +43,6 @@ menuItems = [
     },
 ];
 
-
-function getAllStatuses(){
-    return StatusStore.getAll()
-}
-
 var Main = React.createClass({
     getInitialState: function(){
         this._bounds = new google.maps.LatLngBounds();
@@ -93,7 +88,7 @@ var Main = React.createClass({
             this.props.history.replaceState(null, "/auth");
             return;
         }
-        this.setState({stats: StatusStore.getAll()});
+        this.setState({stats: StatusStore.carStats});
     },
     logOut: function(){
         LoginActions.logOut();
@@ -106,6 +101,9 @@ var Main = React.createClass({
         update.forEach(function(group){
             content.push(<Sidebar key={group.groupName} stats={group}/>)
             group.data.forEach(function(vehicle){
+                if(StatusStore.markers.indexOf(vehicle.id) === -1){
+                    return;
+                }
                 markers.push({
                     position:{
                         lat: vehicle.latitude,
@@ -115,38 +113,27 @@ var Main = React.createClass({
                 });
             });
         });
+        console.log(StatusStore.markers);
         return (   
-            <div>
-            <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
             <div className="app">
+                <LeftNav  ref="leftNav" docked={false} menuItems={menuItems} />
                 <section className="main">
-                   <header className="toolbar row">
-                      <div className="toolbar__controls col-xs">
-                            <div className="toolbar__controls__buttons pull-left">
-                                <button onClick={this.toggleLeftNav} className="button button--icon">
-                                  <i className="material-icons">menu</i>
-                                </button>
-                            </div>
-                      </div>
-
-                      <div className="toolbar__controls">
-                            <div className="toolbar__controls__buttons pull-right">
-                        <IconMenu iconButtonElement={<IconButton iconClassName="material-icons">more_vert</IconButton>}>
-                            <IconMenuItem index={1} primaryText="Settings" />
-                            <IconMenuItem onClick={this.logOut} index={2} primaryText="Sign out" />
-                        </IconMenu>
-
-                            </div>
-                            <div className="toolbar__controls__search pull-right">
-                              <i className="material-icons">search</i>
-                              <input className="input input--search" type="search"/>
-                            </div>
-                      </div>
-                    </header> 
+                    <div className="flexrow">
+                        <AppBar style={{height:"64px"}}
+                            title="gpsimple"
+                            iconElementLeft={<IconButton onClick={this.toggleLeftNav} ><NavigationMenu /></IconButton>}
+                            iconElementRight={
+                                <IconMenu iconButtonElement={<IconButton iconClassName="material-icons">more_vert</IconButton>}>
+                                    <IconMenuItem index={1} primaryText="Settings" />
+                                    <IconMenuItem onClick={this.logOut} index={2} primaryText="Sign out" />
+                                </IconMenu>
+                            } 
+                        />
+                    </div>
                     <div className="flexrow">
                         <section className="dialog">
-                            <div id={"map-canvas"}>
-                                <GoogleMap containerProps={{style:{height:"100vh"}}} ref="map" defaultZoom={12} 
+                            <div id={"map-canvas"} style={{height:"100vh", width:"100%"}}>
+                                <GoogleMap containerProps={{style:{height:"100%", width:"100%"}}} ref="map" defaultZoom={12} 
                                         defaultCenter={{lat: 41.3079867, lng: 69.2578129}}>
                                         {markers.map(function(marker, index){
                                                 return(<Marker {...marker} />);
@@ -155,7 +142,8 @@ var Main = React.createClass({
                                 </GoogleMap>
                             </div>
                         </section>
-                        <section className="activity activity--shown">
+                        <section style={{boxShadow: "0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24)"}} 
+                                className="activity activity--shown">
                             <div className="activity__body group_profile">
                                 <List style={{borderRadius: 0}} >
                                     {content}
@@ -164,7 +152,6 @@ var Main = React.createClass({
                         </section>
                     </div>
                 </section>
-            </div>
             </div>
             )
     }

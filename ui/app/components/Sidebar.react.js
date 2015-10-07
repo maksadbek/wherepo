@@ -4,7 +4,7 @@ var injectTapEventPlugin = require("react-tap-event-plugin");
 
 var StatusStore = require('../stores/StatusStore');
 
-var CarActions = require('../actions/StatusActions');
+var StatusActions = require('../actions/StatusActions');
 
 var SidebarItem = require('./SidebarItem.react');
 
@@ -28,15 +28,35 @@ var Sidebar = React.createClass({
     propTypes:{
         stats: React.PropTypes.object.isRequired
     },
+    onCheck: function(event, checked){
+        var data = this.props.stats.data
+        console.log(checked)
+        if(checked){
+            StatusActions.addMarker(
+                data.map(function(vehicle){
+                    return vehicle.id
+                })
+            );
+        } else {
+            StatusActions.delMarker(
+                data.map(function(vehicle){
+                    return vehicle.id
+                })
+            );
+        }
+    },
     render: function(){
         var statuses = [];
         var stat = this.props.stats.data;
         var group = this.props.stats.groupName;
         return ( <ListItem open={true} primaryText={group} >
-                    <Checkbox style={{float: "left", width: "auto"}} name="checkbox"></Checkbox>
+                    <Checkbox ref="groupSelect" onCheck={this.onCheck} style={{float: "left", width: "auto"}} name="checkbox"></Checkbox>
                     {
                         stat.map(function(vehicle){
-                            return( <ListItem  key={vehicle.id} primaryText={vehicle.number} />);
+                            return( <ListItem  key={vehicle.id} primaryText={vehicle.number} >
+                                        <Checkbox onCheck={this.onCheck} style={{float: "left", width: "auto"}} name="checkbox"></Checkbox>
+                                    </ListItem>
+                            );
                         })
                     }
                 </ListItem>
