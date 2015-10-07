@@ -49,7 +49,7 @@ var Sidebar = React.createClass({
         var statuses = [];
         var stat = this.props.stats.data;
         var group = this.props.stats.groupName;
-        return ( <ListItem open={true} primaryText={group} >
+        return ( <ListItem open={true} primaryText={group + " (" + stat.length + ")" } >
                     <Checkbox ref="groupSelect" onCheck={this.onCheck} style={{float: "left", width: "auto"}} name="checkbox"></Checkbox>
                     {
                         stat.map(function(vehicle){
