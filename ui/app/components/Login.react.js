@@ -7,8 +7,6 @@ var LoginStore = require('../stores/LoginStore');
 var CarActions = require('../actions/StatusActions');
 var LoginActions = require('../actions/LoginActions');
 
-var ThemeManager = new Mui.Styles.ThemeManager();
-
 var TextField = Mui.TextField,
     RaisedButton = Mui.RaisedButton;
 
@@ -17,14 +15,6 @@ var Login = React.createClass({
         return {
             errors: LoginStore.getErrors()
         }
-    },
-    childContextTypes: {
-          muiTheme: React.PropTypes.object
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: ThemeManager.getCurrentTheme()
-        };
     },
     componentWillUnmount: function(){
         LoginStore.removeChangeListener(this.onChange);

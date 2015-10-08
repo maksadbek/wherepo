@@ -1,6 +1,5 @@
 var React = require('react');
 var Mui  = require('material-ui');
-var injectTapEventPlugin = require("react-tap-event-plugin");
 
 var StatusStore = require('../stores/StatusStore');
 
@@ -8,29 +7,16 @@ var StatusActions = require('../actions/StatusActions');
 
 var SidebarItem = require('./SidebarItem.react');
 
-var ThemeManager = new Mui.Styles.ThemeManager();
-
 var ListItem = Mui.ListItem,
     Checkbox = Mui.Checkbox,
     FontIcon = Mui.FontIcon;
 
-injectTapEventPlugin();
-
 var Sidebar = React.createClass({
-    childContextTypes: {
-          muiTheme: React.PropTypes.object
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: ThemeManager.getCurrentTheme()
-        };
-    },
     propTypes:{
-        stats: React.PropTypes.object.isRequired
+        items : React.PropTypes.array.isRequired
     },
     onCheck: function(event, checked){
         var data = this.props.stats.data
-        console.log(checked)
         if(checked){
             StatusActions.addMarker(
                 data.map(function(vehicle){
@@ -45,21 +31,35 @@ var Sidebar = React.createClass({
             );
         }
     },
+    onCheckItem: function(event, checked){
+        console.log(event.target);
+        if(checked){
+            StatusActions.addMarker([event.target.id]);
+        } else {
+            StatusActions.delMarker([event.target.id])
+        }
+    },
     render: function(){
         var statuses = [];
-        var stat = this.props.stats.data;
-        var group = this.props.stats.groupName;
-        return ( <ListItem open={true} primaryText={group + " (" + stat.length + ")" } >
-                    <Checkbox ref="groupSelect" onCheck={this.onCheck} style={{float: "left", width: "auto"}} name="checkbox"></Checkbox>
-                    {
-                        stat.map(function(vehicle){
-                            return( <ListItem  key={vehicle.id} primaryText={vehicle.number} >
-                                        <Checkbox onCheck={this.onCheck} style={{float: "left", width: "auto"}} name="checkbox"></Checkbox>
-                                    </ListItem>
-                            );
-                        })
-                    }
-                </ListItem>
+        var groups = this.props.items;
+        var menuItems, items;
+        groups.forEach(function(group){
+
+        });
+        return ( 
+                <section style={{boxShadow: "0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24)"}} 
+                        className="activity activity--shown">
+                    <div className="activity__body group_profile">
+                        <DropDownMenu autoWidth={true} menuItems={menuItems} />
+                        <List style={{borderRadius: 0}} >
+                            {   group.map(function(vehicle, id){
+                                    return (<ListItem key={vehicle.id} primaryText={vehicle.number} />)
+                                })
+                            }
+                        </List>
+                    </div>
+                </section>
+                
         );
     },
 });

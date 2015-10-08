@@ -1,4 +1,5 @@
 var React = require('react')
+var ReactDOM = require('react-dom')
 var IndexRoute = require('react-router').IndexRoute;
 var Route = require('react-router').Route;
 var Router = require('react-router').Router;
@@ -9,16 +10,13 @@ var Login = require('./components/Login.react');
 var requireAuth = require('./utils/requireAuth');
 var signedUp = require('./utils/signedUp');
 
-var injectTapEventPlugin = require('react-tap-event-plugin');
-
-
 var App = React.createClass({
     render: function(){
         return this.props.children;
     }
 });
 
-React.render((
+ReactDOM.render((
     <Router>
         <Route path="/" component={App}>
             <IndexRoute component={Main} onEnter={requireAuth}/>

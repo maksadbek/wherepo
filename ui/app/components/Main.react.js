@@ -2,7 +2,6 @@ var React = require('react');
 var Mui  = require('material-ui');
 var GoogleMap = require('react-google-maps').GoogleMap;
 var Marker = require('react-google-maps').Marker;
-var ReactGridLayout = require('react-grid-layout');
 
 var StatusStore = require('../stores/StatusStore');
 var LoginStore = require('../stores/LoginStore');
@@ -11,8 +10,6 @@ var LoginActions = require('../actions/LoginActions');
 
 var Sidebar = require('./Sidebar.react');
 
-var ThemeManager = new Mui.Styles.ThemeManager();
-
 var AppBar = Mui.AppBar,
     MenuItem= Mui.MenuItem, 
     IconButton= Mui.IconButton, 
@@ -20,6 +17,7 @@ var AppBar = Mui.AppBar,
     List  = Mui.List,
     IconMenuItem = require('material-ui/lib/menus/menu-item'),
     Paper = Mui.Paper,
+    DropDownMenu = Mui.DropDownMenu,
     NavigationMenu = Mui.Icons.NavigationMenu,
     LeftNav= Mui.LeftNav;
 
@@ -58,14 +56,6 @@ var Main = React.createClass({
             isChildChecked: false
         }
     },
-    childContextTypes: {
-          muiTheme: React.PropTypes.object
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: ThemeManager.getCurrentTheme()
-        };
-    },
     componentDidMount: function(){
         StatusStore.addChangeListener(this._onChange);
         var mapOptions = { zoom: 10 };
@@ -98,8 +88,16 @@ var Main = React.createClass({
         var markers = [];
         var update = this.state.stats.update;
         var checked = this.state.isChildChecked;
+        var menuItems = [
+            { payload: '1', text: 'Never' },
+            { payload: '2', text: 'Every Night' },
+            { payload: '3', text: 'Weeknights' },
+            { payload: '4', text: 'Weekends' },
+            { payload: '5', text: 'Weekly' },
+        ];
+        <DropDownMenu menuItems={menuItems} />
         update.forEach(function(group){
-            content.push(<Sidebar key={group.groupName} stats={group}/>)
+            content.push()
             group.data.forEach(function(vehicle){
                 if(StatusStore.markers.indexOf(vehicle.id) === -1){
                     return;
@@ -113,7 +111,6 @@ var Main = React.createClass({
                 });
             });
         });
-        console.log(StatusStore.markers);
         return (   
             <div className="app">
                 <LeftNav  ref="leftNav" docked={false} menuItems={menuItems} />
@@ -142,14 +139,7 @@ var Main = React.createClass({
                                 </GoogleMap>
                             </div>
                         </section>
-                        <section style={{boxShadow: "0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24)"}} 
-                                className="activity activity--shown">
-                            <div className="activity__body group_profile">
-                                <List style={{borderRadius: 0}} >
-                                    {content}
-                                </List>
-                            </div>
-                        </section>
+                        <Sidebar key={group.groupName} items={update}/>
                     </div>
                 </section>
             </div>
