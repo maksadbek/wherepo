@@ -13,6 +13,12 @@ var StatusActions = {
                 actionType: StatusConstants.DelMarker,
                 info: info
         });
+    },
+    selectGroup: function(info){
+        AppDispatcher.dispatch({
+            actionType: StatusConstants.ChangeGroup,
+            info: info 
+        });
     }
 };
 

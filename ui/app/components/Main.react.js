@@ -8,7 +8,11 @@ var LoginStore = require('../stores/LoginStore');
 
 var LoginActions = require('../actions/LoginActions');
 
+var ThemeManager = require('material-ui/lib/styles/theme-manager');
+var rawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme.js')
+
 var Sidebar = require('./Sidebar.react');
+var injectTapEventPlugin = require("react-tap-event-plugin");
 
 var AppBar = Mui.AppBar,
     MenuItem= Mui.MenuItem, 
@@ -42,6 +46,15 @@ menuItems = [
 ];
 
 var Main = React.createClass({
+  childContextTypes : {
+    muiTheme: React.PropTypes.object,
+  },
+
+  getChildContext() {
+    return {
+      muiTheme: ThemeManager.getMuiTheme(rawTheme),
+    };
+  },
     getInitialState: function(){
         this._bounds = new google.maps.LatLngBounds();
         var shape = {
@@ -57,22 +70,22 @@ var Main = React.createClass({
         }
     },
     componentDidMount: function(){
-        StatusStore.addChangeListener(this._onChange);
+        StatusStore.addChangeListener(this.onUpdate);
         var mapOptions = { zoom: 10 };
     },
     componentWillMount: function(){
-    StatusStore.sendAjax();
-    this.sendAjaxInterval = setInterval(function(){
         StatusStore.sendAjax();
-    }, 5000);
+        this.sendAjaxInterval = setInterval(function(){
+            StatusStore.sendAjax();
+        }, 5000);
     },
     componentWillUnmount: function(){
-        StatusStore.removeChangeListener(this._onChange);
+        StatusStore.removeChangeListener(this.onUpdate);
     },
     toggleLeftNav: function(){
         this.refs.leftNav.toggle();
     },
-    _onChange: function(){
+    onUpdate: function(){
         if(!LoginStore.isLoggedIn()){
             clearInterval(this.sendAjaxInterval);
             this.props.history.replaceState(null, "/auth");
@@ -88,16 +101,7 @@ var Main = React.createClass({
         var markers = [];
         var update = this.state.stats.update;
         var checked = this.state.isChildChecked;
-        var menuItems = [
-            { payload: '1', text: 'Never' },
-            { payload: '2', text: 'Every Night' },
-            { payload: '3', text: 'Weeknights' },
-            { payload: '4', text: 'Weekends' },
-            { payload: '5', text: 'Weekly' },
-        ];
-        <DropDownMenu menuItems={menuItems} />
         update.forEach(function(group){
-            content.push()
             group.data.forEach(function(vehicle){
                 if(StatusStore.markers.indexOf(vehicle.id) === -1){
                     return;
@@ -139,7 +143,7 @@ var Main = React.createClass({
                                 </GoogleMap>
                             </div>
                         </section>
-                        <Sidebar key={group.groupName} items={update}/>
+                        <Sidebar items={update}/>
                     </div>
                 </section>
             </div>

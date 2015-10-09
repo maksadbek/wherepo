@@ -9,14 +9,13 @@ var UserConstants = require('../constants/UserConstants');
 
 var CHANGE_EVENT = 'change';
 
-var carStats = {};
-
 var host = "online.maxtrack.uz";
 var positionURL = "http://"+host+":8080/positions";
 
 var StatusStore = assign({}, EventEmitter.prototype, {
     carStats: {},
     markers: [],
+    selectedGroup: 3,
     sendAjax: function(){
         var xhr = new XMLHttpRequest();
         xhr.open('POST', encodeURI(positionURL));
@@ -24,11 +23,11 @@ var StatusStore = assign({}, EventEmitter.prototype, {
         xhr.onload = function() {
             if (xhr.status === 200 ) {
                 StatusStore.carStats = JSON.parse(xhr.responseText);
+                StatusStore.emitChange();
             }
             else if (xhr.status !== 200) {
-                console.log("ajax request failed");
+                console.warn("ajax request failed");
             }
-            StatusStore.emitChange();
         };
         xhr.setRequestHeader("X-Access-Token", localStorage.token);
         xhr.send(JSON.stringify({
@@ -48,18 +47,20 @@ var StatusStore = assign({}, EventEmitter.prototype, {
     },
     dispatcherIndex: AppDispatcher.register(function(action){
         switch(action.actionType){
-            case StatusConstants.SelectGroup:
-                StatusStore.chosenGroupIndex = action.info.id;
-                StatusStore.emitChange();
-                break;
             case StatusConstants.AddMarker:
+                console.log(action.info);
                 StatusStore.markers = lodash.union(StatusStore.markers, action.info);
+                console.log(StatusStore.markers);
                 StatusStore.emitChange();
                 break;
             case StatusConstants.DelMarker:
                 lodash.remove(StatusStore.markers, function(id){
                     return action.info.indexOf(id) !== -1;
                 });
+                StatusStore.emitChange();
+                break;
+            case StatusConstants.ChangeGroup:
+                this.selectedGroup = info.index;
                 StatusStore.emitChange();
                 break;
         }
