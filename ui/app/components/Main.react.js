@@ -12,7 +12,6 @@ var ThemeManager = require('material-ui/lib/styles/theme-manager');
 var rawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme.js')
 
 var Sidebar = require('./Sidebar.react');
-var injectTapEventPlugin = require("react-tap-event-plugin");
 
 var AppBar = Mui.AppBar,
     MenuItem= Mui.MenuItem, 

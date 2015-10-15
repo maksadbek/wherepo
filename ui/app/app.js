@@ -10,6 +10,9 @@ var Login = require('./components/Login.react');
 var requireAuth = require('./utils/requireAuth');
 var signedUp = require('./utils/signedUp');
 
+var injectTapEventPlugin = require("react-tap-event-plugin");
+injectTapEventPlugin();
+
 var App = React.createClass({
     render: function(){
         return this.props.children;
