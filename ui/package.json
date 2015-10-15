@@ -8,8 +8,8 @@
     "flux": "2.1.1",
     "material-ui": "0.12.3",
     "object-assign": "4.0.1",
-    "react": "0.13.3",
-    "react-google-maps": "3.0.0",
+    "react": "0.14",
+    "react-google-maps": "4.0.0",
     "react-router": "1.0.0-rc3",
     "lodash":"*",
     "md5":"*"
