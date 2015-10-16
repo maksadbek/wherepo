@@ -68,23 +68,21 @@ var Sidebar = React.createClass({
         groups.forEach(function(group, index){
             menuItems.push({payload: index, text: group.groupName})
         });
-        var data = groups[5];
         var sidebarData;
         var checked = this.state.childChecked;
-        if(!!data){
-            sidebarData= data.data.map(function(vehicle, id){
-                return (<div key={vehicle.id}>
-                            <SidebarItem checked={checked} vehicle={vehicle} />
-                        </div>)
-            })
-        }
+        sidebarData= groups.map(function(group){
+	    var items = group.data.map(function(vehicle, id){
+	    	return (<SidebarItem key={vehicle.id} checked={checked} vehicle={vehicle} />)
+	    })
+	    return (<ListItem primaryText={group.groupName} 
+	    		key={group.groupName} 
+	    		nestedItems={items} />)
+	})
         return ( 
                 <section style={this.style} className="activity activity--shown">
                     <div className="activity__body group_profile">
                         <ListDivider inset={false} /> 
-                        <ListItem leftCheckbox={<Checkbox onCheck={this.onCheck}/>}>
-                            <DropDownMenu autoWidth={false} style={{width:"100%"}} menuItems={menuItems} />
-                        </ListItem>
+		    	<DropDownMenu autoWidth={false} style={{width:"100%"}} menuItems={menuItems} />
                         <List style={{borderRadius: 0}} >
                             {sidebarData }
                         </List>
