@@ -34,6 +34,7 @@ var SidebarItem = React.createClass({
                                             key={vehicle.id} 
                                             primaryText={vehicle.number} 
                     />
+                    <ListDivider inset={false} /> 
                 </div>);
     }
 });
