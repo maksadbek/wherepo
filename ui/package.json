@@ -6,7 +6,7 @@
   "main": "js/app.js",
   "dependencies": {
     "flux": "2.1.1",
-    "material-ui": "0.12.3",
+    "material-ui": "0.13",
     "object-assign": "4.0.1",
     "react": "0.14",
     "react-google-maps": "4.0.0",
