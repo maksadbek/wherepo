@@ -1,5 +1,5 @@
 var React = require('react')
-// var ReactDOM = require('react-dom')
+var ReactDOM = require('react-dom')
 var IndexRoute = require('react-router').IndexRoute;
 var Route = require('react-router').Route;
 var Router = require('react-router').Router;
@@ -19,7 +19,7 @@ var App = React.createClass({
     }
 });
 
-React.render((
+ReactDOM.render((
     <Router>
         <Route path="/" component={App}>
             <IndexRoute component={Main} onEnter={requireAuth}/>

@@ -69,7 +69,8 @@ var Main = React.createClass({
         }
     },
     componentDidMount: function(){
-        StatusStore.addChangeListener(this.onUpdate);
+        StatusStore.addChangeListener(this.onStatusStoreUpdate);
+        LoginStore.addChangeListener(this.onLoginStoreUpdate);
         var mapOptions = { zoom: 10 };
     },
     componentWillMount: function(){
@@ -79,17 +80,20 @@ var Main = React.createClass({
         }, 5000);
     },
     componentWillUnmount: function(){
-        StatusStore.removeChangeListener(this.onUpdate);
+        StatusStore.removeChangeListener(this.onStatusStoreUpdate);
+        LoginStore.removeChangeListener(this.onLoginStoreUpdate);
     },
     toggleLeftNav: function(){
         this.refs.leftNav.toggle();
     },
-    onUpdate: function(){
+    onLoginStoreUpdate: function(){
         if(!LoginStore.isLoggedIn()){
             clearInterval(this.sendAjaxInterval);
             this.props.history.replaceState(null, "/auth");
             return;
         }
+    },
+    onStatusStoreUpdate: function(){
         this.setState({stats: StatusStore.carStats});
     },
     logOut: function(){
