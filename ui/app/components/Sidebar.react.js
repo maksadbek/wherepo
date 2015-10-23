@@ -5,7 +5,7 @@ var StatusStore = require('../stores/StatusStore');
 
 var StatusActions = require('../actions/StatusActions');
 
-var SidebarItem = require('./SidebarItem.react');
+var SidebarGroup = require('./SidebarGroup.react');
 
 var ThemeManager = require('material-ui/lib/styles/theme-manager');
 var rawTheme = require('material-ui/lib/styles/raw-themes/light-raw-theme.js')
@@ -30,65 +30,20 @@ var Sidebar = React.createClass({
     propTypes:{
         items : React.PropTypes.array.isRequired
     },
-    getInitialState: function(){
-        return {childChecked: false}
-    },
-    onCheck: function(event, checked){
-        var data = this.props.items[5];
-        if(checked){
-            this.setState({childChecked: true});
-            StatusActions.addMarker(
-                data.data.map(function(vehicle){
-                    return vehicle.id
-                })
-            );
-        } else {
-            this.setState({childChecked: false});
-            StatusActions.delMarker(
-                data.data.map(function(vehicle){
-                    return vehicle.id
-                })
-            );
-        }
-    },
-    onGroupSelect: function(e, index){
-        StatusActions.selectGroup({
-            index: index
-        });
-    },
     style: {boxShadow: "0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24)"},
     render: function(){
-        var statuses = [],
-            groups = this.props.items,
-            menuItems = [], 
-            items,
-            selectedGroupIndex = StatusStore.selectedGroup;
-
-        // fill menu items
-        groups.forEach(function(group, index){
-            menuItems.push({payload: index, text: group.groupName})
-        });
-        var sidebarData;
-        var checked = this.state.childChecked;
-        sidebarData= groups.map(function(group){
-	    var items = group.data.map(function(vehicle, id){
-	    	return (<SidebarItem key={vehicle.id} checked={checked} vehicle={vehicle} />)
-	    })
-	    return (<ListItem primaryText={group.groupName} 
-	    		key={group.groupName} 
-	    		nestedItems={items} />)
-	})
+        var groups = this.props.items;
+        var sidebarData= groups.map(function(group){
+	    return (<SidebarGroup key={group.Name} group={group}/>)
+        })
         return ( 
-                <section style={this.style} className="activity activity--shown">
-                    <div className="activity__body group_profile">
-                        <ListDivider inset={false} /> 
-		    	<DropDownMenu autoWidth={false} style={{width:"100%"}} menuItems={menuItems} />
-                        <List style={{borderRadius: 0}} >
-                            {sidebarData }
-                        </List>
-                    </div>
-                </section>
-                
+            <section style={this.style} className="activity activity--shown">
+                <div className="activity__body group_profile">
+                    <List style={{borderRadius: 0}} >
+	    	        { sidebarData }
+                    </List>
+                </div>
+            </section>
         );
     },
 });
